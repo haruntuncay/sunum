@@ -2,61 +2,29 @@ package main
 
 import (
 	"fmt"
-	_ "net/http/pprof"
+	"os"
 )
 
-func demo() rune {
-	str := "abchdbasbcaheaeijdaibcasd"
-
-	fm := make(map[rune]int)
-	max := 0
-	var mr rune
-
-	for _, r := range str {
-		fm[r]++
-		if i, _ := fm[r]; i > max {
-			max = i
-			mr = r
-		}
-	}
-
-	return mr
-}
-
-func demo2() rune {
-	str := "abchdbasbcaheaeijdaibcasd"
-	var fm [26]int
-	max := 0
-	var mr rune
-
-	for _, r := range str {
-		fm[r - 'a']++
-		if i := fm[r - 'a']; i > max {
-			max = i
-			mr = r
-		}
-	}
-
-	return mr
-}
 
 func main() {
+	if len(os.Args) < 2 {
+		fmt.Println("Expected 1 argument [http | region].")
+		os.Exit(1)
+	}
 
-	//fc, _ := os.Create("cpu.prof")
-	//_ = pprof.StartCPUProfile(fc)
-	//
-	//fm, _ := os.Create("mem.prof")
-	//runtime.GC()
-	//_ = pprof.WriteHeapProfile(fm)
-	//
-	//defer func() {
-	//	pprof.StopCPUProfile()
-	//	fc.Close()
-	//	fm.Close()
-	//}()
+	mode := os.Args[1]
 
-	//http.HandleFunc("/hello", handlers.HelloHandler)
+	if mode != "http" && mode != "region" {
+		fmt.Println("First argument has to be either 'http' or 'region'.")
+		os.Exit(1)
+	}
 
-	//log.Fatal(http.ListenAndServe(":8000", nil))
-	fmt.Println(demo(), demo2())
+	switch mode {
+		case "http":
+			startServer()
+			break
+		case "region":
+			startRegion()
+			break
+	}
 }
